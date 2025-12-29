@@ -175,14 +175,6 @@ function App() {
         <main className="content-area">
           {currentView === 'profile' ? (
             <div className="profile-view">
-              {viewedProfile && (
-                <div className="message-box">
-                  <h3>[ SEND_TO: {viewedProfile.username.toUpperCase()} ]</h3>
-                  <textarea className="terminal-input msg-input" value={postText}
-                    onChange={(e) => setPostText(e.target.value)} placeholder="Type classified intel..." />
-                  <button className="bix-button" onClick={sendMessage}>EXECUTE_SEND</button>
-                </div>
-              )}
               <div className="profile-header">
                 <div className="profile-avatar">
                   {(viewedProfile || userData)?.avatar ? (
@@ -193,14 +185,53 @@ function App() {
                 </div>
                 <div className="profile-info">
                   <h2>AGENT: {(viewedProfile || userData)?.username?.toUpperCase()}</h2>
-                  <p><strong>STATUS:</strong> <span className={viewedProfile ? "status-offline" : "online-pulse"}>
-                    {viewedProfile ? " OFFLINE" : " ONLINE"}</span></p>
-                  <p><strong>LOCATION:</strong> {(viewedProfile || userData)?.location || 'UNKNOWN'}</p>
+                  <p>
+                    <strong>
+                      STATUS:
+                    </strong>
+                    <span className={viewedProfile ? "status-offline" : "online-pulse"}
+                    >
+                      {viewedProfile ? " OFFLINE" : " ONLINE"}
+                    </span>
+                  </p>
+                  <p>
+                    <strong>
+                      LOCATION:
+                    </strong>
+                    {(viewedProfile || userData)?.location || 'UNKNOWN'}
+                  </p>
                 </div>
               </div>
               <div className="profile-bio">
-                <p><strong>BIO_DATA:</strong></p>
-                <div className="bio-text">{viewedProfile ? viewedProfile.bio : (userData?.bio || 'NO INTEL')}</div>
+                <p>
+                  <strong>
+                    BIO_DATA:
+                  </strong>
+                </p>
+                <div className="bio-text">
+                  {viewedProfile ? viewedProfile.bio : (userData?.bio || 'NO INTEL')}
+                </div>
+                {viewedProfile && (
+                    <div className="message-form" style={{ marginTop: '20px', borderTop: '1px solid #00ff0033', paddingTop: '15px' }}>
+                      <p style={{ color: '#00ff00', fontSize: '0.8rem', marginBottom: '10px' }}>
+                          [ SEND_ENCRYPTED_MESSAGE_TO: {viewedProfile.username?.toUpperCase()} ]
+                      </p>
+                      <textarea
+                        className="terminal-input"
+                        value={postText}
+                        onChange={(e) => setPostText(e.target.value)}
+                        placeholder="ENTER_ENCRYPTED_DATA..."
+                        style={{ width: '100%', minHeight: '80px', marginBottom: '10px' }}
+                        />
+                      <button
+                        className="terminal-button"
+                        onClick={() => handleSendMessage(viewedProfile.user)}
+                        >
+                          [ EXECUTE_SEND ]
+                        </button>
+                      </div>
+                    )}
+
               </div>
             </div>
           ) : (
