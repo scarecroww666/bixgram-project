@@ -6,8 +6,9 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from rest_framework import filters # Добавь этот импорт в начало файла
 
-from .models import Profile
-from .serializers import ProfileSerializer, RegisterSerializer
+from .models import Profile, Message
+from .serializers import ProfileSerializer, RegisterSerializer, MessageSerializer
+from django.db.models import Q
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
@@ -57,3 +58,18 @@ class MyProfileView(APIView):
         profile, _ = Profile.objects.get_or_create(user=request.user)
         serializer = ProfileSerializer(profile)
         return Response(serializer.data)
+
+
+class MessageViewSet(viewsets.ModelViewSet):
+    serializer_class = MessageSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Message.objects.filter(
+            Q(sender=user) | Q(receiver=user)
+        ).order_by('timestamp')
+
+    def perform_create(self, serializer):
+        # Принудительно назначаем текущего юзера отправителем
+        serializer.save(sender=self.request.user)

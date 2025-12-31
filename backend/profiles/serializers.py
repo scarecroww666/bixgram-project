@@ -2,6 +2,16 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Profile, Message
 
+class MessageSerializer(serializers.ModelSerializer):
+    sender_username = serializers.ReadOnlyField(source='sender.username')
+    receiver_username = serializers.ReadOnlyField(source='receiver.username')
+
+    class Meta:
+        model = Message
+        fields = ['id', 'sender', 'receiver', 'sender_username', 'receiver_username', 'text', 'timestamp']
+        read_only_fields = ['sender']
+
+
 class ProfileSerializer(serializers.ModelSerializer):
     username = serializers.ReadOnlyField(source='user.username')
     email = serializers.ReadOnlyField(source='user.email')
@@ -10,11 +20,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = ['user', 'username', 'email', 'location', 'bio', 'avatar']
 
-class MessageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Message
-        fields = ['id', 'sender', 'receiver', 'text', 'timestamp']
-        read_only_fields = ['sender']  # Отправителя ставит сервер сам
 
 
 class RegisterSerializer(serializers.ModelSerializer):
